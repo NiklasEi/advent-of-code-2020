@@ -7,4 +7,5 @@ mod puzzle_05;
 mod puzzle_06;
 mod puzzle_07;
 mod puzzle_08;
+mod puzzle_09;
 mod read_file;
