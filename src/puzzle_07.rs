@@ -90,12 +90,12 @@ fn get_bag(bag_color: String, bags: &Vec<Bag>) -> Option<&Bag> {
 }
 
 #[cfg(test)]
-mod tests {
+mod solve {
     use crate::puzzle_07::{count_bags_in_shiny_gold, count_bags_that_carry_shiny_gold};
-    use crate::read_file::read_file_to_vec;
+    use crate::utils::read_file_to_vec;
 
     #[test]
-    fn solve_day_07_1() {
+    fn day_07_1() {
         let input: Vec<String> = read_file_to_vec("input/puzzle_07.txt");
 
         println!(
@@ -105,7 +105,7 @@ mod tests {
     }
 
     #[test]
-    fn solve_day_07_2() {
+    fn day_07_2() {
         let input: Vec<String> = read_file_to_vec("input/puzzle_07.txt");
 
         println!(

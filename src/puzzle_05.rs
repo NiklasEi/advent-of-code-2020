@@ -64,12 +64,12 @@ fn calc_boarding_pass_id(boarding_pass: String) -> usize {
 }
 
 #[cfg(test)]
-mod tests {
+mod solve {
     use crate::puzzle_05::{find_boarding_pass_with_highest_id, find_missing_boarding_pass_id};
-    use crate::read_file::read_file_to_vec;
+    use crate::utils::read_file_to_vec;
 
     #[test]
-    fn solve_day_05_1() {
+    fn day_05_1() {
         let input: Vec<String> = read_file_to_vec("input/puzzle_05.txt");
 
         println!(
@@ -79,7 +79,7 @@ mod tests {
     }
 
     #[test]
-    fn solve_day_05_2() {
+    fn day_05_2() {
         let input: Vec<String> = read_file_to_vec("input/puzzle_05.txt");
 
         println!(

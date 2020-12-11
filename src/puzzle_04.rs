@@ -146,12 +146,12 @@ impl Passport {
 }
 
 #[cfg(test)]
-mod tests {
+mod solve {
     use crate::puzzle_04::{count_complete_passwords, count_valid_passwords};
-    use crate::read_file::read_file_to_vec;
+    use crate::utils::read_file_to_vec;
 
     #[test]
-    fn solve_day_04_1() {
+    fn day_04_1() {
         let input: Vec<String> = read_file_to_vec("input/puzzle_04.txt");
 
         println!(
@@ -161,7 +161,7 @@ mod tests {
     }
 
     #[test]
-    fn solve_day_04_2() {
+    fn day_04_2() {
         let input: Vec<String> = read_file_to_vec("input/puzzle_04.txt");
 
         println!("There are {} valid passports", count_valid_passwords(input));

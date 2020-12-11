@@ -139,18 +139,18 @@ enum Instruction {
 }
 
 #[cfg(test)]
-mod tests {
+mod solve {
     use crate::puzzle_08::{run_program, run_program_with_command_replace};
-    use crate::read_file::read_file_to_vec;
+    use crate::utils::read_file_to_vec;
 
     #[test]
-    fn solve_day_08_1() {
+    fn day_08_1() {
         let input: Vec<String> = read_file_to_vec("input/puzzle_08.txt");
         println!("Program returns with: {:?}", run_program(input));
     }
 
     #[test]
-    fn solve_day_08_2() {
+    fn day_08_2() {
         let input: Vec<String> = read_file_to_vec("input/puzzle_08.txt");
         println!(
             "Program returns with: {:?}",

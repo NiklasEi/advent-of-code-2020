@@ -70,15 +70,15 @@ impl Group {
 }
 
 #[cfg(test)]
-mod tests {
+mod solve {
     use crate::puzzle_06::{
         count_questions_to_which_anyone_answered_yes,
         count_questions_to_which_everyone_answered_yes,
     };
-    use crate::read_file::read_file_to_vec;
+    use crate::utils::read_file_to_vec;
 
     #[test]
-    fn solve_day_06_1() {
+    fn day_06_1() {
         let input: Vec<String> = read_file_to_vec("input/puzzle_06.txt");
 
         println!(
@@ -88,7 +88,7 @@ mod tests {
     }
 
     #[test]
-    fn solve_day_06_2() {
+    fn day_06_2() {
         let input: Vec<String> = read_file_to_vec("input/puzzle_06.txt");
 
         println!(

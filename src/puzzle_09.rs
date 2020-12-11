@@ -64,12 +64,12 @@ fn parse_input(input: Vec<String>) -> Vec<i64> {
 }
 
 #[cfg(test)]
-mod tests {
+mod solve {
     use crate::puzzle_09::{find_encryption_weakness, find_first_non_valid_number};
-    use crate::read_file::read_file_to_vec;
+    use crate::utils::read_file_to_vec;
 
     #[test]
-    fn solve_day_09_1() {
+    fn day_09_1() {
         let input: Vec<String> = read_file_to_vec("input/puzzle_09.txt");
         println!(
             "First invalid value: {:?}",
@@ -78,7 +78,7 @@ mod tests {
     }
 
     #[test]
-    fn solve_day_09_2() {
+    fn day_09_2() {
         let input: Vec<String> = read_file_to_vec("input/puzzle_09.txt");
         println!("Encryption weakness: {:?}", find_encryption_weakness(input));
     }

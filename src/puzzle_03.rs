@@ -58,12 +58,12 @@ fn get_step(x: usize, y: usize, map: &Vec<Vec<Encounter>>) -> &Encounter {
 }
 
 #[cfg(test)]
-mod tests {
+mod solve {
     use crate::puzzle_03::{count_trees_on_slope, multiply_trees_on_slopes, Encounter};
-    use crate::read_file::read_file_to_vec;
+    use crate::utils::read_file_to_vec;
 
     #[test]
-    fn solve_day_03_1() {
+    fn day_03_1() {
         let input: Vec<Vec<Encounter>> = read_file_to_vec("input/puzzle_03.txt")
             .iter()
             .map(|row| row.chars().map(|char| Encounter::from(char)).collect())
@@ -75,7 +75,7 @@ mod tests {
     }
 
     #[test]
-    fn solve_day_03_2() {
+    fn day_03_2() {
         let input: Vec<Vec<Encounter>> = read_file_to_vec("input/puzzle_03.txt")
             .iter()
             .map(|row| row.chars().map(|char| Encounter::from(char)).collect())

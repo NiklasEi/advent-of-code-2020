@@ -23,14 +23,14 @@ fn find_three_numbers_adding_up_to_2020(input: Vec<i32>) -> Option<(i32, i32, i3
 }
 
 #[cfg(test)]
-mod tests {
+mod solve {
     use crate::puzzle_01::{
         find_three_numbers_adding_up_to_2020, find_two_numbers_adding_up_to_2020,
     };
-    use crate::read_file::read_file_to_vec;
+    use crate::utils::read_file_to_vec;
 
     #[test]
-    fn solve_day_1_1() {
+    fn day_01_1() {
         let input = read_file_to_vec("input/puzzle_01.txt")
             .iter()
             .map(|line| line.parse::<i32>().unwrap())
@@ -41,7 +41,7 @@ mod tests {
     }
 
     #[test]
-    fn solve_day_1_2() {
+    fn day_01_2() {
         let input = read_file_to_vec("input/puzzle_01.txt")
             .iter()
             .map(|line| line.parse::<i32>().unwrap())

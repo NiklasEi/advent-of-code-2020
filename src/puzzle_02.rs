@@ -44,15 +44,15 @@ fn convert_to_password_and_rule(line: &str) -> PasswordAndRule {
 }
 
 #[cfg(test)]
-mod tests {
+mod solve {
     use crate::puzzle_02::{
         convert_to_password_and_rule, count_valid_passwords_for_sled_rental_rules,
         count_valid_passwords_for_toboggan_rental_rules, PasswordAndRule,
     };
-    use crate::read_file::read_file_to_vec;
+    use crate::utils::read_file_to_vec;
 
     #[test]
-    fn solve_day_02_1() {
+    fn day_02_1() {
         let input: Vec<PasswordAndRule> = read_file_to_vec("input/puzzle_02.txt")
             .iter()
             .map(|rule| convert_to_password_and_rule(rule))
@@ -64,7 +64,7 @@ mod tests {
     }
 
     #[test]
-    fn solve_day_02_2() {
+    fn day_02_2() {
         let input: Vec<PasswordAndRule> = read_file_to_vec("input/puzzle_02.txt")
             .iter()
             .map(|rule| convert_to_password_and_rule(rule))
