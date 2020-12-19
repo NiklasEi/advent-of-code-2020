@@ -16,4 +16,5 @@ mod puzzle_14;
 mod puzzle_15;
 mod puzzle_16;
 mod puzzle_17;
+mod puzzle_19;
 mod utils;
