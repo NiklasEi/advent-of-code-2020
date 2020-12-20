@@ -1,5 +1,4 @@
 use std::collections::HashMap;
-use std::hash::Hash;
 
 fn count_rule_zero_valid_messages(input: Vec<String>) -> usize {
     let (rules, messages) = parse(input);
@@ -50,7 +49,7 @@ fn parse(input: Vec<String>) -> (RuleMap, Vec<String>) {
         } else if raw_rule.contains("b") {
             rules.insert(key, Rule::B);
         } else {
-            let mut options = raw_rule.split("|");
+            let options = raw_rule.split("|");
             let mut combinations: Vec<Vec<usize>> = vec![];
             for option in options {
                 let rule_keys = option.trim().split(" ");
