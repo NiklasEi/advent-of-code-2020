@@ -1,8 +1,9 @@
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
+use std::path::Prefix::Verbatim;
 
 fn multiply_corner_image_ids(input: Vec<String>) -> Option<usize> {
-    let tiles: TileMap = parse_tiles(input);
-    let (corners, _borders, _central) = sort_tiles(tiles);
+    let mut tiles: TileMap = parse_tiles(input);
+    let (corners, _borders, _central) = sort_tiles(&mut tiles);
 
     if corners.len() == 4 {
         return Some(corners.iter().fold(1, |acc, id| acc * id));
@@ -11,22 +12,107 @@ fn multiply_corner_image_ids(input: Vec<String>) -> Option<usize> {
     None
 }
 
-struct TileMatch {
-    id: usize,
-    matched: Vec<Border>,
+fn calculate_water_roughness_for_sea_monsters(input: Vec<String>) -> usize {
+    let mut tiles: TileMap = parse_tiles(input);
+    let puzzle: Vec<Vec<Pixel>> = build_puzzle(&mut tiles);
+    let sea_monsters: usize = count_sea_monsters(puzzle.clone());
+
+    puzzle
+        .iter()
+        .map(|row| {
+            row.iter().fold(
+                0,
+                |acc, pixel| {
+                    if pixel == &Pixel::Hash {
+                        acc + 1
+                    } else {
+                        acc
+                    }
+                },
+            )
+        })
+        .fold(0, |acc, count| acc + count)
+        - sea_monsters * 15
 }
 
-fn sort_tiles(tiles: TileMap) -> (Vec<usize>, Vec<usize>, Vec<usize>) {
+fn build_puzzle(tiles: &mut TileMap) -> Vec<Vec<Pixel>> {
+    let (corners, borders, central) = sort_tiles(tiles);
+    const PUZZLE_SIZE: usize = 12;
+    let mut puzzle_ids: [[Option<Tile>; PUZZLE_SIZE]; PUZZLE_SIZE] = [
+        [
+            None, None, None, None, None, None, None, None, None, None, None, None,
+        ],
+        [
+            None, None, None, None, None, None, None, None, None, None, None, None,
+        ],
+        [
+            None, None, None, None, None, None, None, None, None, None, None, None,
+        ],
+        [
+            None, None, None, None, None, None, None, None, None, None, None, None,
+        ],
+        [
+            None, None, None, None, None, None, None, None, None, None, None, None,
+        ],
+        [
+            None, None, None, None, None, None, None, None, None, None, None, None,
+        ],
+        [
+            None, None, None, None, None, None, None, None, None, None, None, None,
+        ],
+        [
+            None, None, None, None, None, None, None, None, None, None, None, None,
+        ],
+        [
+            None, None, None, None, None, None, None, None, None, None, None, None,
+        ],
+        [
+            None, None, None, None, None, None, None, None, None, None, None, None,
+        ],
+        [
+            None, None, None, None, None, None, None, None, None, None, None, None,
+        ],
+        [
+            None, None, None, None, None, None, None, None, None, None, None, None,
+        ],
+    ];
+
+    println!("{:?}", tiles.get(corners.first().unwrap()).unwrap());
+
+    for row in 0..PUZZLE_SIZE {
+        for column in 0..PUZZLE_SIZE {
+            match (row, column) {
+                (0, 0) => {
+                    let mut tile = tiles.get(corners.iter().next().unwrap()).unwrap().clone();
+
+                    puzzle_ids[row][column] = Some(tile);
+                }
+                (_, _) => (),
+            }
+        }
+    }
+
+    let mut puzzle = vec![];
+
+    puzzle
+}
+
+fn count_sea_monsters(puzzle: Vec<Vec<Pixel>>) -> usize {
+    0
+}
+
+fn sort_tiles(tiles: &mut TileMap) -> (Vec<usize>, Vec<usize>, Vec<usize>) {
     let mut corners: Vec<usize> = vec![];
     let mut borders: Vec<usize> = vec![];
     let mut central: Vec<usize> = vec![];
-    let mut tile_ids: Vec<&usize> = tiles.keys().collect();
+    let tiles_clone = tiles.clone();
+    let mut tile_ids: Vec<&usize> = tiles_clone.keys().collect();
     while !tile_ids.is_empty() {
         let starting_id = tile_ids.pop().unwrap();
         let mut other_tiles = tiles.clone();
         let start = other_tiles.remove(starting_id).unwrap();
         let mut matched_borders = 0;
-        'border: for border in start.get_borders() {
+        'border: for (direction, border) in start.get_borders() {
             for id in other_tiles.keys().collect::<Vec<&usize>>() {
                 if other_tiles
                     .get(id)
@@ -35,6 +121,9 @@ fn sort_tiles(tiles: TileMap) -> (Vec<usize>, Vec<usize>, Vec<usize>) {
                     .contains(&border)
                 {
                     matched_borders += 1;
+                    let mut tile = tiles.get_mut(starting_id).unwrap().clone();
+                    tile.matches.insert(direction, id.clone());
+                    tiles.insert(starting_id.clone(), tile);
                     continue 'border;
                 }
             }
@@ -54,7 +143,15 @@ fn sort_tiles(tiles: TileMap) -> (Vec<usize>, Vec<usize>, Vec<usize>) {
     (corners, borders, central)
 }
 
-#[derive(Debug)]
+type TileMap = HashMap<usize, Tile>;
+
+#[derive(Debug, Clone)]
+struct Tile {
+    image: Vec<Vec<Pixel>>,
+    matches: HashMap<Border, usize>
+}
+
+#[derive(Debug, Clone, Eq, Hash, PartialEq)]
 enum Border {
     Top,
     Right,
@@ -62,18 +159,22 @@ enum Border {
     Left,
 }
 
-type TileMap = HashMap<usize, Tile>;
-
-#[derive(Debug, Clone)]
-struct Tile {
-    image: Vec<Vec<Pixel>>,
+impl Border {
+    fn rotate_anti_clock(self)-> Self {
+        match self {
+            Border::Top => Border::Left,
+            Border::Left => Border::Bottom,
+            Border::Bottom => Border::Right,
+            Border::Right => Border::Top
+        }
+    }
 }
 
 impl Tile {
-    fn get_borders(&self) -> Vec<Vec<Pixel>> {
-        let mut borders: Vec<Vec<Pixel>> = vec![];
-        borders.push(self.image.first().unwrap().clone());
-        borders.push(self.image.last().unwrap().clone());
+    fn get_borders(&self) -> Vec<(Border, Vec<Pixel>)> {
+        let mut borders: Vec<(Border, Vec<Pixel>)> = vec![];
+        borders.push((Border::Top, self.image.first().unwrap().clone()));
+        borders.push((Border::Bottom, self.image.last().unwrap().clone()));
         let mut left = vec![];
         let mut right = vec![];
 
@@ -81,18 +182,24 @@ impl Tile {
             left.push(row.first().unwrap().clone());
             right.push(row.last().unwrap().clone());
         }
-        borders.push(right);
-        borders.push(left);
+        borders.push((Border::Right, right));
+        borders.push((Border::Left, left));
         borders
     }
 
     fn get_borders_plus_reversed(&self) -> Vec<Vec<Pixel>> {
-        let mut borders = self.get_borders();
+        let mut borders: Vec<Vec<Pixel>> = self.get_borders().drain(..).map(|(_direction, border)| border).collect();
         for mut border in borders.clone() {
             border.reverse();
             borders.push(border);
         }
         borders
+    }
+
+    fn rotate_anti_clock(&mut self) {
+        let old_image = self.image.clone();
+        let transformed_image = vec![];
+        for row in old_image
     }
 }
 
@@ -100,6 +207,20 @@ impl Tile {
 enum Pixel {
     Dot,
     Hash,
+}
+
+fn get_neighbors(row: usize, column: usize) -> Vec<Border> {
+    match (row, column) {
+        (0, 0) => vec![Border::Right, Border::Bottom],
+        (0, 11) => vec![Border::Left, Border::Bottom],
+        (11, 11) => vec![Border::Left, Border::Top],
+        (11, 0) => vec![Border::Right, Border::Top],
+        (0,_) => vec![Border::Left, Border::Bottom, Border::Right],
+        (_, 11) => vec![Border::Top, Border::Left, Border::Bottom],
+        (11, _) => vec![Border::Right, Border::Top, Border::Left],
+        (_,0) => vec![Border::Top, Border::Right, Border::Bottom],
+        (_, _) => vec![Border::Top, Border::Right, Border::Bottom, Border::Left]
+    }
 }
 
 fn parse_tiles(input: Vec<String>) -> TileMap {
@@ -118,7 +239,7 @@ fn parse_tiles(input: Vec<String>) -> TileMap {
                 .unwrap()
                 .parse()
                 .unwrap();
-            let mut tile = Tile { image: vec![] };
+            let mut tile = Tile { image: vec![], matches: HashMap::default() };
             line = input.next();
             let mut current_row;
             while line.is_some() {
@@ -149,7 +270,7 @@ fn parse_tiles(input: Vec<String>) -> TileMap {
 
 #[cfg(test)]
 mod solve {
-    use crate::puzzle_20::multiply_corner_image_ids;
+    use crate::puzzle_20::{calculate_water_roughness_for_sea_monsters, multiply_corner_image_ids};
     use crate::utils::read_file_to_vec;
 
     #[test]
@@ -158,6 +279,15 @@ mod solve {
         println!(
             "Multiple of the corner image IDs: {}",
             multiply_corner_image_ids(input).unwrap()
+        );
+    }
+
+    #[test]
+    fn day_20_2() {
+        let input: Vec<String> = read_file_to_vec("input/puzzle_20.txt");
+        println!(
+            "Water roughness for sea monsters: {}",
+            calculate_water_roughness_for_sea_monsters(input)
         );
     }
 }
