@@ -171,8 +171,9 @@ impl Ticket {
             if !valid {
                 if let Some(current) = error_rate {
                     error_rate = Some(current + field);
+                } else {
+                    error_rate = Some(field);
                 }
-                error_rate = Some(field);
             }
         }
 
