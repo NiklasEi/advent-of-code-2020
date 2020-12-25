@@ -22,4 +22,5 @@ mod puzzle_20;
 mod puzzle_21;
 mod puzzle_22;
 mod puzzle_24;
+mod puzzle_25;
 mod utils;
